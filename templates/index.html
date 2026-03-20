@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Prediction System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .language-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .lang-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .predict-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .predict-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            animation: fadeInUp 0.6s ease 0.2s backwards;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .weather-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .data-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .prediction-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .rain-yes {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .rain-no {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .probability-bar {
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .probability-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: width 1s ease;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loader-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .city-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .result-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="headerTitle">🌍 Real-Time Weather Prediction System</h1>
+            <p id="headerSubtitle">Live Weather Data + Machine Learning Predictions</p>
+        </div>
+
+        <div class="language-toggle">
+            <button class="lang-btn active" onclick="changeLanguage('en')">English</button>
+            <button class="lang-btn" onclick="changeLanguage('mr')">मराठी</button>
+        </div>
+
+        <div class="search-card">
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="cityInput"
+                    placeholder="e.g., Mumbai, London, New York"
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="predict-btn" onclick="predictWeather()" id="predictBtn">
+                    🌦️ Predict Weather
+                </button>
+            </div>
+
+            <div class="loader" id="loader">
+                <div class="loader-spinner"></div>
+                <p style="margin-top: 10px; color: #666;">Fetching data and making predictions...</p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <div id="cityHeader" class="city-header" style="display: none;"></div>
+
+        <div class="results-grid" id="results" style="display: none;">
+            <div class="result-card">
+                <h2 id="currentWeatherTitle">📊 Current Weather</h2>
+                <div class="weather-icon" id="weatherIcon">🌤️</div>
+                <div id="currentWeatherData"></div>
+            </div>
+
+            <div class="result-card">
+                <h2 id="mlPredictionsTitle">🧠 ML Predictions</h2>
+                <div id="predictionsData"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'en';
+        let translations = {};
+
+        async function loadTranslations(lang) {
+            try {
+                const response = await fetch(`/api/translations/${lang}`);
+                translations = await response.json();
+                updateUIText();
+            } catch (error) {
+                console.error('Error loading translations:', error);
+            }
+        }
+
+        function updateUIText() {
+            document.getElementById('headerTitle').textContent = `🌍 ${translations.title}`;
+            document.getElementById('headerSubtitle').textContent = translations.subtitle;
+            document.getElementById('cityInput').placeholder = translations.city_placeholder;
+            document.getElementById('predictBtn').textContent = `🌦️ ${translations.predict_btn}`;
+            document.getElementById('currentWeatherTitle').textContent = `📊 ${translations.current_weather}`;
+            document.getElementById('mlPredictionsTitle').textContent = `🧠 ${translations.ml_predictions}`;
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            loadTranslations(lang);
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                predictWeather();
+            }
+        }
+
+        async function predictWeather() {
+            const city = document.getElementById('cityInput').value.trim();
+
+            if (!city) {
+                showError('Please enter a city name');
+                return;
+            }
+
+            const loader = document.getElementById('loader');
+            const results = document.getElementById('results');
+            const errorMessage = document.getElementById('errorMessage');
+            const predictBtn = document.getElementById('predictBtn');
+
+            loader.style.display = 'block';
+            results.style.display = 'none';
+            errorMessage.style.display = 'none';
+            predictBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ city: city })
+                });
+
+                if (!response.ok) {
+                    throw new Error('City not found or API error');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                showError(translations.api_error || 'Unable to fetch weather data. Please try again.');
+            } finally {
+                loader.style.display = 'none';
+                predictBtn.disabled = false;
+            }
+        }
+
+        function displayResults(data) {
+            const weather = data.current_weather;
+            const predictions = data.predictions;
+
+            document.getElementById('cityHeader').textContent = `${weather.city}, ${weather.country}`;
+            document.getElementById('cityHeader').style.display = 'block';
+
+            const weatherIcons = {
+                'Clear': '☀️',
+                'Clouds': '☁️',
+                'Rain': '🌧️',
+                'Drizzle': '🌦️',
+                'Thunderstorm': '⛈️',
+                'Snow': '❄️',
+                'Mist': '🌫️',
+                'Haze': '🌫️'
+            };
+            document.getElementById('weatherIcon').textContent = weatherIcons[weather.weather] || '🌤️';
+
+            const currentWeatherHTML = `
+                <div class="data-row">
+                    <span class="data-label">${translations.temperature}</span>
+                    <span class="data-value">${weather.temperature.toFixed(1)}°C</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">${translations.feels_like}</span>
+                    <span class="data-value">${weather.feels_like.toFixed(1)}°C</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">${translations.humidity}</span>
+                    <span class="data-value">${weather.humidity}%</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">${translations.pressure}</span>
+                    <span class="data-value">${weather.pressure} hPa</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">${translations.wind_speed}</span>
+                    <span class="data-value">${weather.wind_speed.toFixed(1)} m/s</span>
+                </div>
+            `;
+            document.getElementById('currentWeatherData').innerHTML = currentWeatherHTML;
+
+            const rainText = predictions.rain ? translations.yes : translations.no;
+            const rainClass = predictions.rain ? 'rain-yes' : 'rain-no';
+            const rainIcon = predictions.rain ? '🌧️' : '☀️';
+
+            const predictionsHTML = `
+                <div class="data-row">
+                    <span class="data-label">${translations.predicted_temp}</span>
+                    <span class="data-value">${predictions.predicted_temperature.toFixed(1)}°C</span>
+                </div>
+                <div class="data-row" style="border-bottom: none;">
+                    <span class="data-label">${translations.rain_prediction}</span>
+                    <span class="prediction-badge ${rainClass}">${rainIcon} ${rainText}</span>
+                </div>
+                <div style="margin-top: 20px;">
+                    <div class="data-label">${translations.rain_probability}</div>
+                    <div class="probability-bar">
+                        <div class="probability-fill" style="width: ${(predictions.rain_probability * 100).toFixed(0)}%">
+                            ${(predictions.rain_probability * 100).toFixed(0)}%
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('predictionsData').innerHTML = predictionsHTML;
+
+            document.getElementById('results').style.display = 'grid';
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        loadTranslations('en');
+    </script>
+</body>
+</html>
