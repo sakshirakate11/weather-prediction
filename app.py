@@ -13,6 +13,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+
 supabase_url = os.getenv('VITE_SUPABASE_URL')
 supabase_key = os.getenv('VITE_SUPABASE_ANON_KEY')
 supabase = None
@@ -71,10 +72,11 @@ TRANSLATIONS = {
     }
 }
 
+
 @app.route('/')
 
 def home():
-    return "Backend is running 🚀"
+    return render_template('index.html')
 
 @app.route('/test')
 def test():

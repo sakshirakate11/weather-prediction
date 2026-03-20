@@ -1,8 +1,7 @@
-# Weather App Run TODO
+# TODO: Update app.py home route to render index.html
 
-- [x] Install dependencies (`pip install -r requirements.txt`)
-- [x] Train ML models (`python train_model.py`)
-- [x] Fix app.py (make Supabase optional to prevent startup crash)
-- [x] Start server (`python app.py`)
-- [x] Test at http://localhost:5000
-- [x] Run system tests (`python test_system.py`)
+## Steps:
+1. [x] Edit app.py: Replace home route body `return "Backend is running 🚀"` with `return render_template('index.html')`
+2. [x] Test the change by running `python app.py` and visiting http://localhost:5000
+3. [x] Mark complete and attempt_completion
+
