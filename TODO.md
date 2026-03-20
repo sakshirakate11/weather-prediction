@@ -1,7 +1,14 @@
-# TODO: Update app.py home route to render index.html
+# Fixed Flask + Railway Deployment - Weather App
+## Approved Plan Implementation Steps
 
-## Steps:
-1. [x] Edit app.py: Replace home route body `return "Backend is running 🚀"` with `return render_template('index.html')`
-2. [x] Test the change by running `python app.py` and visiting http://localhost:5000
-3. [x] Mark complete and attempt_completion
+Status: 3/6 ✅
+
+### 1. [✅] Create corrected app.py (full content with minor prod tweaks)
+### 2. [✅] Backup & replace templates/index.html with minimal working UI (full content)
+### 3. [✅] Confirm Procfile (no change needed: web: gunicorn app:app)
+### 4. [ ] Local test: pip install -r requirements.txt && python app.py
+### 5. [ ] Test UI: localhost:5000, enter city & verify predictions
+### 6. [ ] Ready for git push & Railway redeploy
+
+**After step 6: attempt_completion with files & structure.**
 

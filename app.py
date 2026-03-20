@@ -10,18 +10,19 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', template_folder='templates')
 CORS(app)
 
-
+# Supabase (optional - init if env vars present)
 supabase_url = os.getenv('VITE_SUPABASE_URL')
 supabase_key = os.getenv('VITE_SUPABASE_ANON_KEY')
 supabase = None
-# supabase: Client = create_client(supabase_url, supabase_key)  # Optional DB
+if supabase_url and supabase_key:
+    supabase = create_client(supabase_url, supabase_key)
 
+# Load ML models
 with open('rain_model.pkl', 'rb') as f:
     rain_model = pickle.load(f)
-
 with open('temp_model.pkl', 'rb') as f:
     temp_model = pickle.load(f)
 
@@ -72,9 +73,7 @@ TRANSLATIONS = {
     }
 }
 
-
 @app.route('/')
-
 def home():
     return render_template('index.html')
 
@@ -164,3 +163,4 @@ def predict():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
+
