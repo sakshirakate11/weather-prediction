@@ -72,8 +72,13 @@ TRANSLATIONS = {
 }
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+
+def home():
+    return "Backend is running 🚀"
+
+@app.route('/test')
+def test():
+    return jsonify({"message": "API working 🚀"})
 
 @app.route('/api/translations/<lang>')
 def get_translations(lang):

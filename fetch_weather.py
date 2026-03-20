@@ -1,7 +1,8 @@
 import requests
 from typing import Optional, Dict
 
-API_KEY = "d6f3ec3dda9f68c17259ce691fd62aa4"
+import os
+API_KEY = os.getenv('OPENWEATHER_API_KEY', 'd6f3ec3dda9f68c17259ce691fd62aa4')
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 def get_weather_data(city: str) -> Optional[Dict]:
