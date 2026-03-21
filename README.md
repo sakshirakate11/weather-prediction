@@ -226,12 +226,9 @@ This project stands out because:
 - [ ] Mobile app version
 - [ ] Model retraining with accumulated data
 
-## License
-
-MIT
 
 ## Credits
 
 - OpenWeatherMap API for live weather data
 - scikit-learn for ML framework
-- Supabase for database infrastructure
+
